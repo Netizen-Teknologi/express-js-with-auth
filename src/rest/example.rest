@@ -1,0 +1,8 @@
+@host = http://localhost:8001
+
+
+### add new 
+GET  {{host}}/api/v1/users/12312 HTTP/1.1
+
+
+
