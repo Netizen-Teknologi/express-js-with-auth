@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')))
   .set('view engine', 'ejs');
 
 const db = require('./src/models');
-// db.sequelize.sync();
+db.sequelize.sync();
 
 app.use('/test', testRouter);
 app.use('/api/v1', v1Routes)

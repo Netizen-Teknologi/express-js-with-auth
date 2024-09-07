@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
-module.exports = (sequelize, Sequelize) =>  {
-    const User = sequelize.define('user', {
+module.exports = (sequelize, Sequelize) => {
+    const User = sequelize.define('orderia_tb_user', {
         id: {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
@@ -21,18 +21,16 @@ module.exports = (sequelize, Sequelize) =>  {
             type: Sequelize.STRING,
             allowNull: true,
             validate: {
-                is: /^\+?[1-9]\d{1,14}$/ 
+                is: /^\+?[1-9]\d{1,14}$/
             }
         },
         password: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        // If don't want createdAt
-        createdAt: false,
-
-        // If don't want updatedAt
-        updatedAt: false,
+        
+        // don't add the timestamp attributes (updatedAt, createdAt)
+        timestamps: false,
     })
 
     return User;
