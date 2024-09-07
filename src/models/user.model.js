@@ -28,6 +28,11 @@ module.exports = (sequelize, Sequelize) =>  {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        // If don't want createdAt
+        createdAt: false,
+
+        // If don't want updatedAt
+        updatedAt: false,
     })
 
     return User;
