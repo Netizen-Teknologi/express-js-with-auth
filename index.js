@@ -34,13 +34,36 @@ app.get('/', (req, res) => {
 
 
 app.get('/api', (req, res) => {
-  res.json({"msg": "Hello world"});
+  res.json({ "msg": "Hello world" });
 });
 
 app.post('/apix', (req, res) => {
-  res.json({"msg": "Hello world"});
+  res.json({ "msg": "Hello world" });
 
 });
+
+// Middleware global error handling
+app.use((err, req, res, next) => {
+  console.error('Error:', err); // Log error
+  res.status(500).json({ 
+    message: process.env.APP_DEBUG === "true" ? err.message : 'Internal Server Error',
+    ...(process.env.APP_DEBUG === "true" ? { stack: err.stack } : {}) // Include stack trace in development
+
+  });
+})
+
+// Listener untuk menangani uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Tindakan lebih lanjut, seperti me-restart server atau mengirim notifikasi
+});
+
+// Listener untuk menangani unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Tindakan lebih lanjut, seperti logging atau notifikasi
+});
+
 
 app.listen(port, () => {
   console.log(`Listening on http://localhost:${port}`);
