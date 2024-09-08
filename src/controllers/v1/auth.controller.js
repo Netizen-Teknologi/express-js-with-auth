@@ -6,58 +6,63 @@ const jwtExpiresIn = '1h'; // Token expiration time
 
 const User = db.users;
 
-exports.register = async (req, res) => {
-    console.log('req,body', req.body)
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const passwordMatch = await bcrypt.compare(req.body.password, hashedPassword);
-    var user = {};
-
-    var code = 200;
-    var data = {};
-    var message = "Successfully from server";
-
-    var whereCondition_userFindOne = {
-        email: req.body.email
-    };
-
-    const userFindOne = await User.findOne({ where: whereCondition_userFindOne });
-
-    if (userFindOne) {
-        return res.status(400).json({
-            code: 400,
-            message: "Email been registed!",
-            data: data,
-        });
-    }
-
-    if (passwordMatch) {
-        user = {
-            email: req.body.email,
-            name: req.body.name,
-            phoneNumber: req.body.phoneNumber || null,
-            password: hashedPassword,
-        }
-
-        User.create(user)
-            .then((data) => {
-                message = "User registered successfully.";
-
-                res.status(code).json({
-                    code,
-                    message,
-                    data,
-                });
-            })
-            .catch((err) => {
-                code = 500;
-                message = err.message || "Some error occurred while registering user.";
-
-                return res.status(code).json({
-                    code,
-                    message,
-                    data,
-                });
+exports.register = async (req, res,next) => {
+    try {
+        console.log('req,body', req.body)
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const passwordMatch = await bcrypt.compare(req.body.password, hashedPassword);
+        var user = {};
+    
+        var code = 200;
+        var data = {};
+        var message = "Successfully from server";
+    
+        var whereCondition_userFindOne = {
+            email: req.body.email
+        };
+    
+        const userFindOne = await User.findOne({ where: whereCondition_userFindOne });
+    
+        if (userFindOne) {
+            return res.status(400).json({
+                code: 400,
+                message: "Email been registed!",
+                data: data,
             });
+        }
+    
+        if (passwordMatch) {
+            user = {
+                email: req.body.email,
+                name: req.body.name,
+                phoneNumber: req.body.phoneNumber || null,
+                password: hashedPassword,
+            }
+    
+            User.create(user)
+                .then((data) => {
+                    message = "User registered successfully.";
+    
+                    res.status(code).json({
+                        code,
+                        message,
+                        data,
+                    });
+                })
+                .catch((err) => {
+                    next(err);
+                    // code = 500;
+                    // message = "Some error occurred while registering user." || err.message || "Some error occurred while registering user.";
+    
+                    // return res.status(code).json({
+                    //     code,
+                    //     message,
+                    //     data,
+                    // });
+                });
+        }
+    } catch (error) {
+        next(error);
     }
 }
 

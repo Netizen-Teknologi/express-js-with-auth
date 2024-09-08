@@ -23,6 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')))
   .set('view engine', 'ejs');
 
 const db = require('./src/models');
+const { ErrorLog } = require('./src/middlewares/ErrorLogMiddleware');
+const { ErrorLogController } = require('./src/controllers/ErrorLogController');
 db.sequelize.sync();
 
 app.use('/test', testRouter);
@@ -43,14 +45,7 @@ app.post('/apix', (req, res) => {
 });
 
 // Middleware global error handling
-app.use((err, req, res, next) => {
-  console.error('Error:', err); // Log error
-  res.status(500).json({ 
-    message: process.env.APP_DEBUG === "true" ? err.message : 'Internal Server Error',
-    ...(process.env.APP_DEBUG === "true" ? { stack: err.stack } : {}) // Include stack trace in development
-
-  });
-})
+app.use(ErrorLog, ErrorLogController.handleError)
 
 // Listener untuk menangani uncaught exceptions
 process.on('uncaughtException', (err) => {
